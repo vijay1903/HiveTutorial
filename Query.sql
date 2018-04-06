@@ -1,14 +1,6 @@
 CREATE TABLE temporary_driver (col_1 STRING);
-
 LOAD DATA INPATH '/user/hive/DriverData/drivers.csv' OVERWRITE INTO TABLE temporary_driver;
-
 SELECT * FROM temporary_driver;
-
-
-
-
-
-
 
 CREATE TABLE drivers (
     driverID INT,
@@ -32,24 +24,13 @@ from temporary_driver;
 
 select * from drivers;
 
-
-
-
-
 CREATE TABLE temporary_timesheet (col_1 string);
-
 
 LOAD DATA INPATH '/user/hive/DriverData/timesheet.csv' OVERWRITE INTO TABLE temporary_timesheet;
 
-
 select * from temporary_timesheet;
 
-
-
-
-
 CREATE TABLE timesheet (driverId INT, week INT, hours_logged INT , miles_logged INT);
-
 
 insert overwrite table timesheet
 SELECT
@@ -59,18 +40,9 @@ SELECT
   regexp_extract(col_1, '^(?:([^,]*),?){4}', 1) miles_logged
 from temporary_timesheet;
 
-
 select * from timesheet;
 
-
-
-
-
-
-
-
 SELECT driverId, sum(hours_logged), sum(miles_logged) FROM timesheet GROUP BY driverId;
-
 
 --If you get an error saying "Error while processing statement: FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask"
 --then use this line
@@ -79,10 +51,3 @@ SELECT driverId, sum(hours_logged), sum(miles_logged) FROM timesheet GROUP BY dr
 SELECT d.driverId, d.name, t.total_hours, t.total_miles from drivers d
 JOIN (SELECT driverId, sum(hours_logged)total_hours, sum(miles_logged)total_miles FROM timesheet GROUP BY driverId ) t
 ON (d.driverId = t.driverId);
-
-
-
-drop table drivers;
-drop table timesheet;
-drop table temporary_driver;
-drop table temporary_timesheet;
